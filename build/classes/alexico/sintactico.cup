@@ -1,0 +1,67 @@
+// 1ra area: codigo de usuario
+//importaciones y paquetes
+    
+    package alexico;
+    import java_cup.runtime.Symbol;
+
+//codigo para el parser, variables, metodos
+    parser code
+    {:
+    public String resultado = "";
+
+    private Symbol s;
+
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+    }
+:}
+
+//codigo para las acciones gramaticasles
+action code{:
+:}
+
+// 2da area: declaraciones
+
+terminal INT, IF, ELSE, WHILE, ASSIGN, EQUALS, PLUS, MINUS, TIMES, DEVIDED, PARA, PARC,
+LLAA, LLAC, MAIN, PUNTOC, ID, NUMERO;
+
+non terminal INICIO,  DECLARACION;
+non terminal SENTENCIA, SENTENCIAS, E;
+
+//precedencia de mayor a menor
+precedence left PLUS, MINUS;
+precedence left TIMES, DEVIDED;
+
+start with INICIO;
+
+// 3ra area: reglas semanticas
+INICIO::= INT MAIN PARA PARC LLAA SENTENCIAS LLAC;
+
+//SENTENCIA::= INT ID PUNTOC | INT ID ASSIGN NUMERO PUNTOC;
+//SENTENCIA::=ID ASSIGN NUMERO PLUS NUMERO PUNTOC;
+
+SENTENCIAS::= SENTENCIA SENTENCIAS | SENTENCIA;
+SENTENCIA::=ID ASSIGN E:a {: resultado= (String) a; :} PUNTOC;
+
+E::=E:a PLUS E:b {: int val1 = Integer.parseInt((String) a);
+                int val2 = Integer.parseInt((String) b);
+                int r = val1+val2;
+                RESULT = String.valueOf(r); :}
+    |E:a MINUS E:b {: int val1 = Integer.parseInt((String) a);
+                int val2 = Integer.parseInt((String) b);
+                int r = val1-val2;
+                RESULT = String.valueOf(r); :}
+    |E:a DEVIDED E:b {: int val1 = Integer.parseInt((String) a);
+                int val2 = Integer.parseInt((String) b);
+                int r = val1/val2;
+                RESULT = String.valueOf(r); :}
+    |E:a TIMES E:b {: int val1 = Integer.parseInt((String) a);
+                int val2 = Integer.parseInt((String) b);
+                int r = val1*val2;
+                RESULT = String.valueOf(r); :}
+    |PARA E:a {:RESULT = a; :} PARC
+    |NUMERO:a {:RESULT =  (String) a; :};
